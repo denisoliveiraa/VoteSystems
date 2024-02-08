@@ -4,12 +4,21 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Poll {
-  id String @id @default(uuid())
-  title String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id         String       @id @default(uuid())
+  title      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+  pollOption pollOption[]
+}
+
+model pollOption {
+  id     String @id @default(uuid())
+  title  String
+  pollId String
+
+  poll Poll @relation(fields: [pollId], references: [id])
 }
