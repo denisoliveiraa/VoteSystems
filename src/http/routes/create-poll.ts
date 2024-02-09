@@ -14,14 +14,15 @@ app.post('/polls', async (request, reply) => {
  const poll = await prisma.poll.create({
     data: {
       title,
+      options: {
+        createMany: {
+          data: options.map(option => {
+            return {title: option}
+          })
+        }
+      }
     }
   })
-
-  await prisma.pollOption.createMany({
-    data: options.map(option => {
-        return {title: option, pollId: poll.id}
-    }),
-  })
-  return reply.status(201).send({'pollId': poll.id})
+  return reply.status(201).send({pollId: poll.id})
 })
 }
