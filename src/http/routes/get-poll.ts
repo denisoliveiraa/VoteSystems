@@ -14,6 +14,14 @@ app.get('/polls/:pollId', async (request, reply) => {
     
   where: {
     id: pollId,
+  },
+  include: {
+    options: {
+      select: {
+      id: true,
+      title: true
+      }
+    }
   }
   })
   return reply.send({poll})
