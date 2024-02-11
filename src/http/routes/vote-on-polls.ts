@@ -28,6 +28,6 @@ app.post('/polls/:pollId/votes', async (request, reply) => {
       httpOnly: true,
     })
   }
-  return reply.status(201).send()
+  return reply.status(201).send({sessionId})
 })
 }
