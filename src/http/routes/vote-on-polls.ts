@@ -6,7 +6,7 @@ import { FastifyInstance } from "fastify"
 export async function voteOnPoll(app: FastifyInstance){
 app.post('/polls/:pollId/votes', async (request, reply) => {
   const voteOnPollBody = z.object({
-    pollIdOptionId: z.string().uuid()
+    pollOptionId: z.string().uuid()
   })
 
   const VoteOnPollParams = z.object({
@@ -14,9 +14,20 @@ app.post('/polls/:pollId/votes', async (request, reply) => {
   })
 
   const {pollId} = VoteOnPollParams.parse(request.params)
-  const {pollIdOptionId} = voteOnPollBody.parse(request.body)
+  const {pollOptionId} = voteOnPollBody.parse(request.body)
 
   let { sessionId } = request.cookies
+
+  if (sessionId){
+    const userReviousVoteOnPoll = await prisma.vote.findUnique({
+      where: {
+        sessionId_pollId:{
+          sessionId, 
+          pollId,
+        }
+      }
+    })
+  }
 
   if(!sessionId) {
     sessionId = randomUUID()
@@ -28,6 +39,14 @@ app.post('/polls/:pollId/votes', async (request, reply) => {
       httpOnly: true,
     })
   }
+
+  await prisma.vote.create({
+    data: {
+      sessionId,
+      pollId,
+      pollOptionId
+    }
+  })
   return reply.status(201).send({sessionId})
 })
 }
