@@ -84,12 +84,6 @@ Run database migrations:
 
 ```bash
 Copy code
-npx prisma migrate dev
-Start the server:
-```
-
-```bash
-Copy code
 npm run start
 Access the application:
 ```
